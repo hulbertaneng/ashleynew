@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ashley Store</title>
+  <style>
+    /* CSS styles here */
+    body{
+    background-color: #d12d43;
+    }
+    .header {
+      background-color: #d12d43;
+      padding: 20px;
+      text-align: center;
+    }
+    .navbar {
+      background-color: rgb(235, 31, 65);
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+    }
+    .navbar a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 20px;
+      font-size: 18px;
+    }
+    .product-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .product {
+      border: 1px solid #df60bf;
+      background-color: #d12d48;
+      margin: 30px;
+      padding: 30px;
+      width: 300px;
+    }
+    .promotions {
+      border: 1px solid #df60bf;
+      background-color: #d12d48;
+      margin: 30px;
+      padding: 30px;
+      width: 300px;
+    }
+
+    .product img {
+      width:290px;
+      height:330px;
+    }
+    .promotions img{
+      width:290px;
+      height:330px;
+    }
+
+    button {
+      background-color:  rgb(141, 7, 29);
+      color: #fff;
+      padding: 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 18px;
+      border-radius: 5;
+    }
+    button:hover{
+    opacity: 0.8;
+    }
+   
+    .cart {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background-color: #ffffff;
+      color: #eb0766;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 18px;
+    }
+    .home {
+      text-align: center;
+      padding: 50px;
+      font-size: 24px;
+    }
+    .hot-list {
+      border: 1px solid #df60bf;
+      background-color: #d12d48;
+      margin: 30px;
+      padding: 30px;
+      width: 300px;
+    
+    }
+    .hot-product {
+      border: 1px solid #df60bf;
+      background-color: #d12d48;
+      margin: 30px;
+      padding: 30px;
+      width: 300px;}
+
+    .modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgb(255, 0, 0);
+    }
+    .copyright{
+      text-align: center;
+      padding: 0px;
+      height: 100px;
+      color: white;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Ashley Store</h1>
+  </div>
+  <div class="navbar">
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#" onclick="showPage('products')">Products</a>
+    <a href="#" onclick="showPage('cart')">Cart (0)</a>
+    <a href="#" onclick="showPage('upload')">Upload Product</a>
+    <a href="#" id="location">Location: non</a>
+   
+  </div>
+  <div id="page-content">
+    <!-- Page content will be displayed here -->
+  </div>
+  <script>
+    // JavaScript code here
+    let currentPage = 'home';
+    let cart = [];
+    let products = [
+      { name: 'Nuisettes', price: 1500, image: 'C:/Users/Albertine/Downloads/Screenshot_20240911-091149_1.png', quantity: 3 },
+      { name: 'Black Gown', price: 2500, image: 'C:/Users/Albertine/Downloads/Screenshot_20240911-094803_1.png', quantity: 0 },
+      { name: 'cap', price: 2500, image: 'C:/Users/Albertine/Downloads/Screenshot_20240911-095449_1.png', quantity: 0 },
+      { name: 'cap', price: 2500, image: 'C:/Users/Albertine/Downloads/Screenshot_20240911-095905_1.png', quantity: 0 },
+      { name: 'cullote', price: 4000, image: 'C:/Users/Albertine/Downloads/IMG-20240911-WA0004.jpg', quantity: 0 },
+      { name: 'Pollover', price: 6000, image: 'C:/Users/Albertine/Downloads/IMG-20240911-WA0005.jpg', quantity: 0 }
+    ];
+    let  promotions  = [
+     
+    ];
+    let deliveryFee = [];
+    let selectedLocation = [];
+
+    function showPage(page) {
+      currentPage = page;
+      let pageContent = '';
+      if (page === 'home') {
+        pageContent = `
+          <div class="home">
+            <h1>Welcome to Ashley Store!</h1>
+            <p>We have a wide range of products for you to choose from and we deliver to the following regions</p>
+            <p>Northwest</p>
+            <p>Southwest</p>
+            <p>Litoral</p>
+            <p>Centre</p>
+            <p>west</p>          
+          <h2>Hot List</h2>
+            <div class="hot-list">
+              ${products.slice(0, 3).map(product => `
+                <div class="hot-product">
+                  <img src="${product.image}">
+                  <h2>${product.name}</h2>
+                  <p>Price: ${product.price} XAF</p>
+                  <button onclick="showQuantityModal('${product.name}', ${product.price}, ${product.quantity})">Order Now</button>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (page === 'products') {
+        pageContent = `
+          <h1>Products</h1>
+          <div class="product-container">
+            ${products.map(product => `
+              <div class="product">
+                <img src="${product.image}">
+                <h2>${product.name}</h2>
+                <p>Price: ${product.price} XAF</p>
+                <p>Quantity: ${product.quantity}</p>
+                <button onclick="showQuantityModal('${product.name}', ${product.price}, ${product.quantity})">Order Now</button>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else if (page === 'cart') {
+        pageContent = `
+          <h1>Cart</h1>
+          <div class="cart">
+            ${cart.map((item, index) => `
+              <p>${index + 1}. ${item.name} x ${item.quantity} - ${item.price * item.quantity} XAF
+                <button onclick="adjustQuantity(${index}, -1)">-</button>
+                <button onclick="adjustQuantity(${index}, 1)">+</button>
+              </p>
+            `).join('')}
+            ${cart.length > 0 ? `
+              <p>Select Location:</p>
+              <select onchange="selectLocation(this.value)">
+                <option value="non">non</option>
+                <option value="Litoral">Litoral</option>
+                <option value="Northwest">Northwest</option>
+                <option value="West">West</option>
+                <option value="Southwest">Southwest</option>
+                <option value="Centre">Centre</option>
+              </select>
+              <p>Delivery Fee: ${deliveryFee} XAF</p>
+              <p>Total: ${cart.reduce((acc, item) => acc + item.price * item.quantity, 0) + deliveryFee} XAF</p>
+              <button onclick="pay()">Pay</button>
+              <button onclick="cancelOrder()">Cancel Order</button>
+            ` : `<p>Your cart is empty.</p>`}
+          </div>
+        `;
+      } else if (page === 'promotion') {
+        pageContent = `
+          <h1>Promotion</h1>
+          <div class="product-container">
+            ${promotions.map(product => `
+              <div class="product">
+                <img src="${product.image}">
+                <h2>${product.name}</h2>
+                <p>Price: ${product.price} XAF</p>
+                <button onclick="showQuantityModal('${product.name}', ${product.price}, 0)">Order Now</button>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else if (page === 'upload') {
+        pageContent = `
+          <h1>Upload Product</h1>
+          <form>
+            <input type="text" id="product-name" placeholder="Product Name">
+            <input type="number" id="product-price" placeholder="Product Price">
+            <input type="file" id=".jpg">
+            <button onclick="uploadProduct()">Upload</button>
+          </form>
+        `;
+      }
+      document.getElementById('page-content').innerHTML = pageContent;
+      if (page === 'cart') {
+        document.querySelector('.navbar a:nth-child(3)').textContent = `Cart (${cart.length})`;
+        document.querySelector('#location').textContent = `Location: ${selectedLocation}`;
+      }
+    }
+
+    function showQuantityModal(productName, price, quantity) {
+      let modalContent = `
+        <div class="modal">
+          <h2>Enter Quantity</h2>
+          <input type="number" id="quantity" min="1" value="${quantity}">
+          <button onclick="addToCart('${productName}', ${price}, document.getElementById('quantity').value)">Add to Cart</button>
+        </div>
+      `;
+      document.getElementById('page-content').innerHTML += modalContent;
+    }
+
+    function addToCart(productName, price, quantity) {
+      const product = cart.find(p => p.name === productName);
+      if (product) {
+        product.quantity += parseInt(quantity);
+      } else {
+        cart.push({ name: productName, price: price, quantity: parseInt(quantity) });
+      }
+      const productInProducts = products.find(p => p.name === productName);
+      if (productInProducts) {
+        productInProducts.quantity = parseInt(quantity);
+      }
+      document.querySelector('.navbar a:nth-child(3)').textContent = `Cart (${cart.length})`;
+      document.querySelector('.modal').remove();
+    }
+
+    function adjustQuantity(index, adjustment) {
+      cart[index].quantity += adjustment;
+      if (cart[index].quantity <= 0) {
+        cart.splice(index, 1);
+      }
+      showPage('cart');
+    }
+
+    function selectLocation(locationValue) {
+      selectedLocation = locationValue;
+      if     (selectedLocation==='non') {deliveryFee = 0}
+      else if (selectedLocation === 'Litoral') {
+        deliveryFee = 500;
+      } else if (selectedLocation === 'Northwest') {
+        deliveryFee = 2000;
+      } else if (selectedLocation === 'West') {
+        deliveryFee = 1500;
+      } else if (selectedLocation === 'Southwest') {
+        deliveryFee = 1000;
+      } else if (selectedLocation === 'Centre') {
+        deliveryFee = 700;
+      }
+      document.querySelector('#location').textContent = `Location: ${selectedLocation}`;
+      showPage('cart');
+    }
+
+    function uploadProduct() {
+      const productName = document.getElementById('product-name').value;
+      const productPrice = document.getElementById('product-price').value;
+      const productImage = document.getElementById('product-image').files[0].name;
+      products.push({ name: productName, price: productPrice, image: productImage, quantity: 0 });
+      showPage('products');
+    }
+
+    function pay() {
+      window.open("https://wa.me/+237671760080","whatsapp");
+        alert('transaction done')
+      cart = [];
+      deliveryFee = 0;
+      selectedLocation = [];
+      document.querySelector('.navbar a:nth-child(3)').textContent = 'Cart (0)';
+      document.querySelector('#location').textContent = 'non';
+      showPage('home');
+    }
+
+    function cancelOrder() {
+      cart = [];
+      deliveryFee = 0;
+      selectedLocation = [];
+      document.querySelector('.navbar a:nth-child(3)').textContent = 'Cart (0)';
+      document.querySelector('#location').textContent = 'non';
+      showPage('home');
+    }
+    
+   
+    showPage('home');
+
+  </script>
+   <p class="copyright">copyright 2023</p>
+</body>
+</html>
+
+
